@@ -154,7 +154,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		throw new IOException("File does not appear to be an AFF4 File.");
+		
 	}
 
 	/**

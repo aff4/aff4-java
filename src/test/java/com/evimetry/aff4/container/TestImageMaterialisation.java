@@ -1,8 +1,7 @@
 /*
   This file is part of AFF4 Java.
   
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
-
+  Copyright (c) 2017-2019 Schatz Forensic Pty Ltd
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -63,7 +62,7 @@ public class TestImageMaterialisation {
 	private final static String linearSHA1 = "7d3d27f667f95f7ec5b9d32121622c0f4b60b48d";
 	private final static String allocatedSHA1 = "e8650e89b262cf0b4b73c025312488d5a6317a26";
 	private final static String readErrorSHA1 = "67e245a640e2784ead30c1ff1a3f8d237b58310f";
-
+	private final static String blankSHA1 = "e68329455580cb50fb1debc88cecf2e9aaf3f7fe";
 	/**
 	 * The size of the read to perform.
 	 */
@@ -194,6 +193,46 @@ public class TestImageMaterialisation {
 			try (SeekableByteChannel channel = map.getChannel()) {
 				assertEquals(268435456, channel.size());
 				assertEquals(linearSHA1, getDigest(channel, readSize));
+			}
+		}
+	}
+	
+	@Test
+	public void testContainerBlank() throws UnsupportedOperationException, IOException, Exception {
+		URL url = TestContainer.class.getResource("/blank.aff4");
+		File file = Paths.get(url.toURI()).toFile();
+		try (IAFF4Container container = Containers.open(file)) {
+			assertEquals("aff4://b437c880-9f5a-420e-8553-8878f5518441", container.getResourceID());
+			Iterator<IAFF4Image> images = container.getImages();
+			assertTrue(images.hasNext());
+			IAFF4Image image = images.next();
+			assertFalse(images.hasNext());
+			assertEquals("aff4://818f24e3-1b67-457d-a9cd-1cd234ba9573", image.getResourceID());
+			IAFF4Map map = image.getMap();
+			assertEquals("aff4://223fb1d7-7826-4631-a35b-df14ad7bf75e", map.getResourceID());
+			try (SeekableByteChannel channel = map.getChannel()) {
+				assertEquals(99983360, channel.size());
+				assertEquals(blankSHA1, getDigest(channel, readSize));
+			}
+		}
+	}
+	
+	@Test
+	public void testContainerBlank5() throws UnsupportedOperationException, IOException, Exception {
+		URL url = TestContainer.class.getResource("/blank5.aff4");
+		File file = Paths.get(url.toURI()).toFile();
+		try (IAFF4Container container = Containers.open(file)) {
+			assertEquals("aff4://37de92d3-24bb-4e5f-8279-a2b3992eba52", container.getResourceID());
+			Iterator<IAFF4Image> images = container.getImages();
+			assertTrue(images.hasNext());
+			IAFF4Image image = images.next();
+			assertFalse(images.hasNext());
+			assertEquals("aff4://0b3029ee-47f1-479e-9f87-fca0041e8cc2", image.getResourceID());
+			IAFF4Map map = image.getMap();
+			assertEquals("aff4://6e3c59b5-e660-4adf-8eb6-472cef961c2d", map.getResourceID());
+			try (SeekableByteChannel channel = map.getChannel()) {
+				assertEquals(99983360, channel.size());
+				assertEquals(blankSHA1, getDigest(channel, readSize));
 			}
 		}
 	}

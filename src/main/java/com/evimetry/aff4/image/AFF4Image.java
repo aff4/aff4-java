@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -111,11 +109,11 @@ public class AFF4Image extends AFF4Resource implements IAFF4Image {
 	public IAFF4Map getMap() {
 		if (properties.containsKey(AFF4Lexicon.dataStream)) {
 			String mapResource = properties.get(AFF4Lexicon.dataStream).iterator().next().toString();
-			return new AFF4Map(mapResource, parent, model);
+			return new AFF4Map(mapResource, getResourceID(), parent, model);
 		}
 		if (properties.get(AFF4Lexicon.RDFType).contains(AFF4Lexicon.Map)) {
 			// we are also a aff4:Map
-			return new AFF4Map(getResourceID(), parent, model);
+			return new AFF4Map(getResourceID(), getResourceID(), parent, model);
 		}
 		logger.warn("No Map aff4:dataStream defined for Image " + getResourceID());
 		return null;

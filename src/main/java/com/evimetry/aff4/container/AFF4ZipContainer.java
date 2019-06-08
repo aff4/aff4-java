@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -25,6 +23,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -59,6 +58,7 @@ import com.evimetry.aff4.image.AFF4Image;
 import com.evimetry.aff4.imagestream.AFF4ImageStream;
 import com.evimetry.aff4.imagestream.ImageStreamFactory;
 import com.evimetry.aff4.imagestream.SymbolicImageStream;
+import com.evimetry.aff4.imagestream.ZipSegmentImageCompressedStream;
 import com.evimetry.aff4.imagestream.ZipSegmentImageStream;
 import com.evimetry.aff4.map.AFF4Map;
 import com.evimetry.aff4.rdf.NameCodec;
@@ -69,7 +69,7 @@ import com.evimetry.aff4.resource.AFF4Resource;
  * AFF4 Container implementation based on a Zip file.
  */
 public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
-
+	
 	private final static Logger logger = LoggerFactory.getLogger(AFF4ZipContainer.class);
 	/**
 	 * The underlying zip file we are using.
@@ -146,6 +146,14 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 				setPropety(prop, "tool", AFF4Lexicon.Tool);
 				setPropety(prop, "major", AFF4Lexicon.majorVersion);
 				setPropety(prop, "minor", AFF4Lexicon.minorVersion);
+				if(!checkSupportedVersion()) {
+					try {
+						close();
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+					throw new IOException("AFF4 File appears to be of an unsupported version.");
+				}
 			}
 			return;
 		}
@@ -154,7 +162,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		
+		throw new IOException("File does not appear to be an AFF4 File.");
 	}
 
 	/**
@@ -199,6 +207,28 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 			logger.error(e.getMessage(), e);
 		}
 		throw new IOException("File does not appear to be an AFF4 File.");
+	}
+	
+	/**
+	 * Check is a supported version.
+	 * 
+	 * @returns TRUE for supported version.
+	 */
+	private boolean checkSupportedVersion() throws IOException {
+		Collection<Object> major = getProperty(AFF4Lexicon.majorVersion);
+		Collection<Object> minor = getProperty(AFF4Lexicon.minorVersion);
+		if (major.isEmpty() || minor.isEmpty()) {
+			return false;
+		}
+		try {
+			long maj = Long.parseLong(major.iterator().next().toString());
+			long min = Long.parseLong(minor.iterator().next().toString());
+			return (maj == 1 && min == 0);
+		} catch (NumberFormatException e) {
+			// Ignore.
+			logger.warn(e.getMessage(), e);
+			return false;
+		}
 	}
 
 	@Override
@@ -339,7 +369,12 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		ZipArchiveEntry entry = zip.getEntry(res);
 		if (entry != null) {
 			if (entry.getMethod() != ZipMethod.STORED.getCode()) {
-				throw new IOException("Unable to create ImageStream from non-Stored zip segment");
+				if (entry.getSize() < ZipSegmentImageCompressedStream.MAX_BUFFER_SIZE) {
+					IAFF4ImageStream stream = new ZipSegmentImageCompressedStream(resource, this, zip, entry);
+					openStreams.add(stream);
+					return stream;
+				}
+				throw new IOException("Unable to create ImageStream from non-Stored zip segment larger than 32MB");
 			}
 			IAFF4ImageStream stream = new ZipSegmentImageStream(resource, this, channel, entry);
 			openStreams.add(stream);
@@ -412,7 +447,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 	public IAFF4Map getMap(String resource) throws IOException {
 		Resource rdfResource = model.createResource(resource);
 		if (rdfResource.hasProperty(RDF.type, model.createProperty(AFF4Lexicon.Map.getValue()))) {
-			return new AFF4Map(resource, this, model);
+			return new AFF4Map(resource, resource, this, model);
 		}
 		return null;
 	}

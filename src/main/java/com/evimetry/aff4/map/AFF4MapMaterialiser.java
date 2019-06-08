@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -62,6 +60,10 @@ public class AFF4MapMaterialiser {
 	 */
 	private final String resource;
 	/**
+	 * The resource id of the image this map represents.
+	 */
+	private final String imageResource;
+	/**
 	 * The parent container.
 	 */
 	private final AFF4ZipContainer parent;
@@ -98,12 +100,14 @@ public class AFF4MapMaterialiser {
 	/**
 	 * Create a new map materialiser.
 	 * 
-	 * @param resource The resource
+	 * @param resource The resource of this map.
+	 * @param imageResource The resource of the image this map represents
 	 * @param parent The parent container
 	 * @param model The RDF model to query about this image stream.
 	 */
-	protected AFF4MapMaterialiser(String resource, AFF4ZipContainer parent, Model model) {
+	protected AFF4MapMaterialiser(String resource, String imageResource, AFF4ZipContainer parent, Model model) {
 		this.resource = sanitize(resource, parent.getResourceID());
+		this.imageResource = sanitize(imageResource, parent.getResourceID());;
 		this.parent = parent;
 		this.model = model;
 	}
@@ -317,11 +321,13 @@ public class AFF4MapMaterialiser {
 	 * @return TRUE if according to the RDF model we are expected to be a sparse map.
 	 */
 	private boolean getIsSparse() {
+		// Check map resource for type
 		Resource res = model.createResource(resource);
 		Property prop = model.createProperty(AFF4Lexicon.DiscontiguousImage.getValue());
 		if (res.hasProperty(RDF.type, prop)) {
 			return true;
 		}
+		// Check the parent resource for type
 		Optional<String> target = RDFUtil.readResourceProperty(model, resource, AFF4Lexicon.target);
 		if (target.isPresent()) {
 			res = model.createResource(target.get());
@@ -329,7 +335,9 @@ public class AFF4MapMaterialiser {
 				return true;
 			}
 		}
-		return false;
+		// Check image resource (assuming target is not set, or target points to something else).
+		res = model.createResource(imageResource);
+		return res.hasProperty(RDF.type, prop);
 	}
 
 	/**

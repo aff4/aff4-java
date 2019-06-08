@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -121,7 +119,7 @@ public class AFF4ImageStream extends AFF4Resource implements IAFF4ImageStream, S
 		this.size = RDFUtil.readLongProperty(model, resource, AFF4Lexicon.size).orElse(0l);
 		this.chunkSize = RDFUtil.readIntProperty(model, resource, AFF4Lexicon.chunkSize).orElse(AFF4.DEFAULT_CHUNK_SIZE);
 		this.chunksInSegment = RDFUtil.readIntProperty(model, resource, AFF4Lexicon.chunksInSegment).orElse(AFF4.DEFAULT_CHUNKS_PER_SEGMENT);
-		String compression = RDFUtil.readResourceProperty(model, resource, AFF4Lexicon.compressionMethod).orElse(AFF4Lexicon.SnappyCompression.getValue());
+		String compression = RDFUtil.readResourceProperty(model, resource, AFF4Lexicon.compressionMethod).orElse(AFF4Lexicon.NoCompression.getValue());
 		this.codec = CompressionCodec.getCodec(compression, chunkSize);
 		this.bevvyCache = Caffeine.newBuilder().maximumSize(BEVVY_CACHE_SIZE).build();
 		this.chunkCache = Caffeine.newBuilder().maximumSize((int) (CHUNK_CACHE_SIZE / (long) chunkSize)).build();

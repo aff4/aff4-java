@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -18,10 +16,15 @@
  */
 package com.evimetry.aff4.map;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SeekableByteChannel;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +38,9 @@ import com.evimetry.aff4.IAFF4Container;
 import com.evimetry.aff4.IAFF4ImageStream;
 import com.evimetry.aff4.IAFF4Map;
 import com.evimetry.aff4.container.AFF4ZipContainer;
+import com.evimetry.aff4.imagestream.Streams;
 import com.evimetry.aff4.map.collection.LongTreap;
+import com.evimetry.aff4.rdf.NameCodec;
 import com.evimetry.aff4.rdf.RDFUtil;
 import com.evimetry.aff4.resource.AFF4Resource;
 import com.evimetry.aff4.struct.MapEntryPoint;
@@ -47,6 +52,10 @@ public class AFF4Map extends AFF4Resource implements IAFF4Map, SeekableByteChann
 	 * The parent container.
 	 */
 	private final AFF4ZipContainer parent;
+	/**
+	 * The resource id of the image this map represents.
+	 */
+	private final String imageResource;
 	/**
 	 * The RDF model to query about this map.
 	 */
@@ -90,12 +99,14 @@ public class AFF4Map extends AFF4Resource implements IAFF4Map, SeekableByteChann
 	 * Create a new aff4:Map object
 	 * 
 	 * @param resource The resource
+	 * @param imageResource The resource of the image this map represents
 	 * @param parent The parent container
 	 * @param model The RDF model to query about this image stream.
 	 */
-	public AFF4Map(String resource, AFF4ZipContainer parent, Model model) {
+	public AFF4Map(String resource, String imageResource, AFF4ZipContainer parent, Model model) {
 		super(resource);
 		this.parent = parent;
+		this.imageResource = imageResource;
 		this.model = model;
 		this.size = RDFUtil.readLongProperty(model, resource, AFF4Lexicon.size).orElse(0l);
 		initProperties(model);
@@ -116,15 +127,68 @@ public class AFF4Map extends AFF4Resource implements IAFF4Map, SeekableByteChann
 		 */
 		addLongProperty(model, getResourceID(), AFF4Lexicon.size);
 		addResourceProperty(model, getResourceID(), AFF4Lexicon.dependentStream);
+		
+		checkDependentStreamInformation(model, getResourceID());
+
 		// TODO: Add in digest values for this map as stored in the model.
 	}
 
+	/**
+	 * Ensure our properties has AFF4Lexicon.dependentStream information
+	 * 
+	 * @param model The model to read from if required.
+	 * @param resourceID The map ID.
+	 */
+	private void checkDependentStreamInformation(Model model, String resourceID) {
+		if (!properties.containsKey(AFF4Lexicon.dependentStream)) {
+			// We don't have this property, so read the 'idx' file and obtain them.
+			String mapTargetName = NameCodec.encode(String.format("%s/idx", resourceID));
+			// Load the target map ids
+			try {
+				IAFF4ImageStream stream = parent.getSegment(mapTargetName);
+				try (SeekableByteChannel channel = stream.getChannel()) {
+					Collection<Object> streams = new ArrayList<>();
+					ByteBuffer buffer = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
+					Streams.readFull(channel, 0, buffer);
+					buffer.flip();
+					try (BufferedReader br = new BufferedReader(
+							new InputStreamReader(new ByteArrayInputStream(buffer.array())))) {
+						for (String line = br.readLine(); line != null; line = br.readLine()) {
+							if (!line.isEmpty()) {
+								if (line.equalsIgnoreCase(AFF4Lexicon.Zero.getValue())) {
+									continue;
+								}
+								if (line.equalsIgnoreCase(AFF4Lexicon.UnknownData.getValue())) {
+									continue;
+								}
+								if (line.equalsIgnoreCase(AFF4Lexicon.UnreadableData.getValue())) {
+									continue;
+								}
+								if (line.startsWith(AFF4Lexicon.SymbolicData.getValue())) {
+									continue;
+								}
+								streams.add(model.createResource(line));
+							} else {
+								logger.warn(String.format("Unexpected empty line in \"%s\"?", mapTargetName));
+							}
+						}
+						if (!streams.isEmpty()) {
+							properties.put(AFF4Lexicon.dependentStream, streams);
+						}
+					}
+				}
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+	}
+	
 	/**
 	 * Materialise the map.
 	 */
 	private synchronized void initialiseMap() throws IOException {
 		if (map == null) {
-			AFF4MapMaterialiser mapFactory = new AFF4MapMaterialiser(getResourceID(), parent, model)//
+			AFF4MapMaterialiser mapFactory = new AFF4MapMaterialiser(getResourceID(), imageResource, parent, model)//
 					.setMapGapStreamOverride(mapGapStreamOverride)//
 					.setUnknownStreamOverride(unknownStreamOverride)//
 					.build();

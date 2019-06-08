@@ -1,8 +1,7 @@
 /*
   This file is part of AFF4 Java.
   
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
-
+  Copyright (c) 2017-2019 Schatz Forensic Pty Ltd
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -110,6 +109,44 @@ public class TestContainer {
 			assertEquals(AFF4Lexicon.ZipVolume, rdfType.iterator().next());
 			Collection<Object> time = container.getProperty(AFF4Lexicon.CreationTime);
 			assertEquals(Instant.parse("2017-03-09T03:51:42.689Z"), time.iterator().next());
+		}
+	}
+	
+	@Test
+	public void testContainerBlank() throws UnsupportedOperationException, IOException, Exception {
+		URL url = TestContainer.class.getResource("/blank.aff4");
+		File file = Paths.get(url.toURI()).toFile();
+		try (IAFF4Container container = Containers.open(file)) {
+			assertEquals("aff4://b437c880-9f5a-420e-8553-8878f5518441", container.getResourceID());
+			Collection<Object> tool = container.getProperty(AFF4Lexicon.Tool);
+			assertEquals("libaff4 1.0", tool.iterator().next().toString());
+			Collection<Object> major = container.getProperty(AFF4Lexicon.majorVersion);
+			assertEquals("1", major.iterator().next().toString());
+			Collection<Object> minor = container.getProperty(AFF4Lexicon.minorVersion);
+			assertEquals("0", minor.iterator().next().toString());
+			Collection<Object> rdfType = container.getProperty(AFF4Lexicon.RDFType);
+			assertEquals(AFF4Lexicon.ZipVolume, rdfType.iterator().next());
+			Collection<Object> time = container.getProperty(AFF4Lexicon.CreationTime);
+			assertTrue(time.isEmpty());
+		}
+	}
+	
+	@Test
+	public void testContainerBlank5() throws UnsupportedOperationException, IOException, Exception {
+		URL url = TestContainer.class.getResource("/blank5.aff4");
+		File file = Paths.get(url.toURI()).toFile();
+		try (IAFF4Container container = Containers.open(file)) {
+			assertEquals("aff4://37de92d3-24bb-4e5f-8279-a2b3992eba52", container.getResourceID());
+			Collection<Object> tool = container.getProperty(AFF4Lexicon.Tool);
+			assertEquals("libaff4 1.0", tool.iterator().next().toString());
+			Collection<Object> major = container.getProperty(AFF4Lexicon.majorVersion);
+			assertEquals("1", major.iterator().next().toString());
+			Collection<Object> minor = container.getProperty(AFF4Lexicon.minorVersion);
+			assertEquals("0", minor.iterator().next().toString());
+			Collection<Object> rdfType = container.getProperty(AFF4Lexicon.RDFType);
+			assertEquals(AFF4Lexicon.ZipVolume, rdfType.iterator().next());
+			Collection<Object> time = container.getProperty(AFF4Lexicon.CreationTime);
+			assertTrue(time.isEmpty());
 		}
 	}
 }

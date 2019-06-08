@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -16,7 +14,6 @@
   You should have received a copy of the GNU Lesser General Public License
   along with AFF4 Java.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.evimetry.aff4;
 
 import java.util.HashMap;
@@ -118,6 +115,10 @@ public enum AFF4Lexicon {
 	 * No Compression.
 	 */
 	NoCompression(AFF4.AFF4_BASE_URI + "NullCompressor"),
+	/**
+	 * Zlib Compression (defunct)
+	 */
+	ZlibCompression("https://www.ietf.org/rfc/rfc1950.txt"),
 
 	/*
 	 * Object properties.

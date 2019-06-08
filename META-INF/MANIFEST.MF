@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: com.evimetry.aff4
+Bundle-ManifestVersion: 2
+Bundle-Name: AFF4 Java
+Bundle-SymbolicName: com.evimetry.aff4;singleton:=true
+Bundle-Version: 1.0.1
+Bundle-Vendor: Schatz Forensic
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Classpath: .
+Export-Package: com.evimetry.aff4,
+ com.evimetry.aff4.codec,
+ com.evimetry.aff4.container,
+ com.evimetry.aff4.examples,
+ com.evimetry.aff4.image,
+ com.evimetry.aff4.imagestream,
+ com.evimetry.aff4.map,
+ com.evimetry.aff4.map.collection,
+ com.evimetry.aff4.rdf,
+ com.evimetry.aff4.resolver,
+ com.evimetry.aff4.resource,
+ com.evimetry.aff4.struct
+Import-Package: com.github.benmanes.caffeine.cache;version="2.7.0",
+ net.jpountz.lz4,
+ org.apache.commons.compress.archivers.zip;version="1.18.0",
+ org.apache.commons.io;version="2.6.0",
+ org.apache.jena;version="3.10.0",
+ org.apache.jena.datatypes.xsd;version="3.10.0",
+ org.apache.jena.rdf.model;version="3.10.0",
+ org.apache.jena.util;version="3.10.0",
+ org.apache.jena.vocabulary;version="3.10.0",
+ org.slf4j;version="1.7.2",
+ org.xerial.snappy;version="1.1.7"
+
+

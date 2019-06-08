@@ -1,22 +1,40 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
-  AFF4 Java is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  AFF4 Java is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with AFF4 Java.  If not, see <http://www.gnu.org/licenses/>.
+  This file is licensed as per below.
  */
-
+/* Based on implementation found at: http://www.canonware.com/trp/
+/******************************************************************************
+*
+* Copyright (C) 2008 Jason Evans <jasone@canonware.com>.
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions
+* are met:
+* 1. Redistributions of source code must retain the above copyright
+*    notice(s), this list of conditions and the following disclaimer
+*    unmodified other than the allowable addition of one or more
+*    copyright notices.
+* 2. Redistributions in binary form must reproduce the above copyright
+*    notice(s), this list of conditions and the following disclaimer in
+*    the documentation and/or other materials provided with the
+*    distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER(S) ``AS IS'' AND ANY
+* EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+* PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER(S) BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+* BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+* OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+* EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*
+******************************************************************************
+*/
 package com.evimetry.aff4.map.collection;
 
 import java.util.Random;
@@ -24,7 +42,7 @@ import java.util.Random;
 /**
  * A treap implementation.
  * <p>
- * This implementation uses Longs as the key for the treap being produced.
+ * This implementation used Longs as the key for the treap being produced.
  *
  * @param <V> The element to be hosted in this treap.
  */

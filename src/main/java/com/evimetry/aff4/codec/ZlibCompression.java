@@ -25,9 +25,9 @@ import java.util.zip.Inflater;
 import com.evimetry.aff4.AFF4Lexicon;
 
 /**
- * Deflate codec
+ * Zlib codec
  */
-public class DeflateCompression implements CompressionCodec {
+public class ZlibCompression implements CompressionCodec {
 
 	/**
 	 * The chunk size of the stream we are decompression.
@@ -36,15 +36,15 @@ public class DeflateCompression implements CompressionCodec {
 	/**
 	 * Decompressor.
 	 */
-	private final Inflater decompressor = new Inflater(true);
+	private final Inflater decompressor = new Inflater(false);
 
 	/**
-	 * Create a new Deflate decompression codec.
+	 * Create a new Zlib decompression codec.
 	 * 
 	 * @param chunkSize The chunk size the regions should be.
 	 * @throws IllegalArgumentException If the chunk size is negative or zero.
 	 */
-	public DeflateCompression(int chunkSize) {
+	public ZlibCompression(int chunkSize) {
 		if(chunkSize <= 0) {
 			throw new IllegalArgumentException("Chunksize must be larger than 0");
 		}
@@ -75,7 +75,7 @@ public class DeflateCompression implements CompressionCodec {
 
 	@Override
 	public String getResourceID() {
-		return AFF4Lexicon.DeflateCompression.getValue();
+		return AFF4Lexicon.ZlibCompression.getValue();
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class DeflateCompression implements CompressionCodec {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DeflateCompression other = (DeflateCompression) obj;
+		ZlibCompression other = (ZlibCompression) obj;
 		if (chunkSize != other.chunkSize)
 			return false;
 		return true;

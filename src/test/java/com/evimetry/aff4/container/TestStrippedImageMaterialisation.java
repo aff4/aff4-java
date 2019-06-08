@@ -1,8 +1,7 @@
 /*
   This file is part of AFF4 Java.
   
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
-
+  Copyright (c) 2017-2019 Schatz Forensic Pty Ltd
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -56,7 +55,7 @@ import com.evimetry.aff4.imagestream.Streams;
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
-public class TestStripedImageMaterialisation {
+public class TestStrippedImageMaterialisation {
 
 	private final static String linearSHA1 = "7d3d27f667f95f7ec5b9d32121622c0f4b60b48d";
 
@@ -84,7 +83,7 @@ public class TestStripedImageMaterialisation {
 	@Rule
 	public TestName name = new TestName();
 
-	public TestStripedImageMaterialisation(long readSize) {
+	public TestStrippedImageMaterialisation(long readSize) {
 		this.readSize = readSize;
 	}
 

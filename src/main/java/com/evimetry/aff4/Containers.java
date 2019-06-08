@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class Containers {
 	 * 
 	 * @param file The file to open
 	 * @param resolver Set the container to utilise the given AFF4 object resolver to look for objects outside of it's
-	 *            own container.
+	 *        own container.
 	 * @return A AFF4 container instance
 	 * @throws IOException If the file does not exist or is not readable.
 	 * @throws UnsupportedOperationException If the container type is not supported.
@@ -118,7 +118,7 @@ public class Containers {
 		 * zip implementation, as it gives us the information we need to access the actual raw contents of the zip
 		 * container).
 		 */
-		if(!file.exists() || file.isDirectory() || !file.canRead()){
+		if (!file.exists() || file.isDirectory() || !file.canRead()) {
 			return null;
 		}
 		String resourceID = null;
@@ -131,6 +131,21 @@ public class Containers {
 				try (InputStream is = zip.getInputStream(entry)) {
 					resourceID = IOUtils.toString(is, StandardCharsets.UTF_8);
 				}
+			}
+		} catch (ZipException e) {
+			logger.error("'" + file.toString() + "' Failed reading '" + AFF4.FILEDESCRIPTOR + "' with error: " + e.getMessage());
+			/*
+			 * Retry with Apache Commons to read the container.description file.
+			 */
+			try (ZipFile aZip = new ZipFile(file, "UTF-8", true)) {
+				ZipArchiveEntry zae = aZip.getEntry(AFF4.FILEDESCRIPTOR);
+				if (zae != null) {
+					try (InputStream is = aZip.getInputStream(zae)) {
+						resourceID = IOUtils.toString(is, StandardCharsets.UTF_8);
+					}
+				}
+			} catch (IOException e1) {
+				logger.error("'" + file.toString() + "' Failed reading '" + AFF4.FILEDESCRIPTOR + "' with error: " + e.getMessage(), e1);
 			}
 		} catch (IOException e) {
 			logger.error(e.getMessage(), e);

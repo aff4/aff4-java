@@ -17,14 +17,16 @@
 package com.evimetry.aff4.imagestream;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
-import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.IOUtils;
 
 import com.evimetry.aff4.AFF4Lexicon;
 import com.evimetry.aff4.IAFF4ImageStream;
@@ -32,65 +34,62 @@ import com.evimetry.aff4.container.AFF4ZipContainer;
 import com.evimetry.aff4.resource.AFF4Resource;
 
 /**
- * A IAFF4ImageStream implementation that uses a raw Zip Segment as the backing store.
+ * A IAFF4ImageStream implementation that uses a buffer for the stream.
  */
-public class ZipSegmentImageStream extends AFF4Resource implements IAFF4ImageStream, SeekableByteChannel {
+public class ZipSegmentImageCompressedStream extends AFF4Resource implements IAFF4ImageStream, SeekableByteChannel {
 
 	/**
-	 * The parent Zip container for this entry
+	 * The largest size this stream can be.
+	 */
+	public final static long MAX_BUFFER_SIZE = 32 * 1024 * 1024;
+	/**
+	 * The parent AFF4 Zip container for this entry
 	 */
 	private final AFF4ZipContainer parent;
 	/**
 	 * The zip entry that this segment is tied to.
 	 */
 	private final ZipArchiveEntry entry;
-
-	/**
-	 * The parent channel to perform reads from.
-	 */
-	private final FileChannel channel;
-
-	/**
-	 * The offset that this zip segment data starts at in the above channel.
-	 */
-	private final long offset;
-
-	/**
-	 * The position of the channel.
-	 */
-	private long position;
-
 	/**
 	 * The size of this entry;
 	 */
 	private final long size;
-
+	/**
+	 * The position of the channel.
+	 */
+	private long position;
 	/**
 	 * Closed flag.
 	 */
 	private final AtomicBoolean closed = new AtomicBoolean(false);
+	/**
+	 * The buffer to hold the decompressed image data.
+	 */
+	private final byte[] buffer;
 
 	/**
 	 * Create a new ImageStream based on a raw Zip Segment. The zip entry MUST be uncompressed.
 	 * 
 	 * @param resource The resource ID for this zip segment.
-	 * @param parent The parent zip container
-	 * @param channel The file channel to perform IO against.
+	 * @param parent The parent AFF4 zip container
+	 * @param zip The parent Zip container.
 	 * @param entry The zip entry.
 	 * @throws IOException If creation of the image stream fails.
 	 */
-	public ZipSegmentImageStream(String resource, AFF4ZipContainer parent, FileChannel channel, ZipArchiveEntry entry)
+	public ZipSegmentImageCompressedStream(String resource, AFF4ZipContainer parent, ZipFile zip, ZipArchiveEntry entry)
 			throws IOException {
 		super(resource);
 		this.parent = parent;
-		this.channel = channel;
 		this.entry = entry;
 		this.size = entry.getSize();
-		this.offset = entry.getDataOffset();
-		if (offset <= 0) {
-			throw new IOException("Invalid offset in datastream");
+		if (this.size > MAX_BUFFER_SIZE) {
+			throw new IOException("IAFF4ImageStream buffered stream is too large");
 		}
 		initProperties();
+		// Load the buffer.
+		try (InputStream stream = zip.getInputStream(entry)) {
+			buffer = IOUtils.readFully(stream, (int) size);
+		}
 	}
 
 	/**
@@ -121,9 +120,14 @@ public class ZipSegmentImageStream extends AFF4Resource implements IAFF4ImageStr
 		if (dst == null || !dst.hasRemaining()) {
 			return 0;
 		}
-		int read = channel.read(dst, offset + position);
-		position += read;
-		return read;
+		int limit = (int) Math.min(dst.remaining(), size - position);
+		if(limit <= 0) {
+			return 0;
+		}
+		int offset = (int) position;
+		dst.put(buffer, offset, limit);
+		position += limit;
+		return limit;
 	}
 
 	@Override
@@ -141,7 +145,7 @@ public class ZipSegmentImageStream extends AFF4Resource implements IAFF4ImageStr
 		if (newPosition >= size) {
 			newPosition = size - 1;
 		}
-		this.position = newPosition;
+		position = newPosition;
 		return this;
 	}
 
@@ -165,7 +169,6 @@ public class ZipSegmentImageStream extends AFF4Resource implements IAFF4ImageStr
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((entry == null) ? 0 : entry.hashCode());
-		result = prime * result + (int) (offset ^ (offset >>> 32));
 		result = prime * result + (int) (size ^ (size >>> 32));
 		return result;
 	}
@@ -178,13 +181,11 @@ public class ZipSegmentImageStream extends AFF4Resource implements IAFF4ImageStr
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ZipSegmentImageStream other = (ZipSegmentImageStream) obj;
+		ZipSegmentImageCompressedStream other = (ZipSegmentImageCompressedStream) obj;
 		if (entry == null) {
 			if (other.entry != null)
 				return false;
 		} else if (!entry.equals(other.entry))
-			return false;
-		if (offset != other.offset)
 			return false;
 		if (size != other.size)
 			return false;

@@ -1,7 +1,5 @@
 /*
   This file is part of AFF4 Java.
-  
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
 
   AFF4 Java is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +23,7 @@ import java.nio.ByteOrder;
 import com.evimetry.aff4.AFF4Lexicon;
 
 import net.jpountz.lz4.LZ4Factory;
-import net.jpountz.lz4.LZ4FastDecompressor;
+import net.jpountz.lz4.LZ4SafeDecompressor;
 
 /**
  * LZ4 codec
@@ -39,7 +37,7 @@ public class LZ4Compression implements CompressionCodec {
 	/**
 	 * The decompression module.
 	 */
-	private final LZ4FastDecompressor decompressor;
+	private final LZ4SafeDecompressor decompressor;
 
 	/**
 	 * Create a new LZ4 decompression codec.
@@ -62,7 +60,7 @@ public class LZ4Compression implements CompressionCodec {
 			// Use the Java unsage implementation.
 			lz4factory = LZ4Factory.fastestJavaInstance();
 		}
-		decompressor = lz4factory.fastDecompressor();
+		decompressor = lz4factory.safeDecompressor();
 	}
 
 	@Override
@@ -77,7 +75,7 @@ public class LZ4Compression implements CompressionCodec {
 			source.get(srcArray);
 		}
 		try {
-			decompressor.decompress(srcArray, 0, destination, 0, chunkSize);
+			decompressor.decompress(srcArray, 0, srcArray.length, destination, 0, chunkSize);
 			source.position(p);
 			return ByteBuffer.wrap(destination).order(ByteOrder.LITTLE_ENDIAN);
 		} catch (Throwable e) {

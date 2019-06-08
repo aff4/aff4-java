@@ -1,8 +1,7 @@
-AFF4 Java v1.0
+AFF4 Java v1.0.1
 -----
 
-Implements read support for AFF4 Standard v1.0 images.
+Copyright (c) Schatz Forensic Pty Ltd, 2017-2019
 
-Copyright Schatz Forensic Pty Ltd, 2017
-
-Released under the LGPL v3.0+
+Main source released under the LGPL v3.0+
+Tests released under the Apache licence.

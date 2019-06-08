@@ -1,8 +1,7 @@
 /*
   This file is part of AFF4 Java.
   
-  Copyright (c) 2017 Schatz Forensic Pty Ltd
-
+  Copyright (c) 2017-2019 Schatz Forensic Pty Ltd
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -51,6 +50,8 @@ public class TestZipImageStream {
 	private final String mapSHA1 = "5204743948cafe73b9c3d75052e52ead3d319cc7";
 	private final String streamSHA1 = "ba85b601a65aef8adf7b0e0fb3144b217d4cd27c";
 	private final String streamIndexSHA1 = "8bb7f7820cffbb3b14007e36d2b0ad2459c4d9fa";
+	
+	private final String filename2 = "/blank.aff4";
 
 	/**
 	 * Test reading a basic file entry.
@@ -157,6 +158,28 @@ public class TestZipImageStream {
 			testStreamContents(con.getSegment("aff4://c215ba20-5648-4209-a793-1f918c723610/00000000.index"),
 					streamIndexSHA1);
 			testStreamContents(con.getSegment("aff4://c215ba20-5648-4209-a793-1f918c723610/00000000"), streamSHA1);
+		}
+	}
+	
+	/**
+	 * Test for accessing the a map index entry
+	 * 
+	 * @throws Exception something went wrong.
+	 */
+	@Test
+	public void testContainerImageStreamCompressedContents() throws Exception {
+		URL url = TestContainer.class.getResource(filename2);
+		File file = Paths.get(url.toURI()).toFile();
+		try (IAFF4Container container = Containers.open(file)) {
+			// Confirm we have the correct container.
+			assertEquals("aff4://b437c880-9f5a-420e-8553-8878f5518441", container.getResourceID());
+			assertTrue(container instanceof AFF4ZipContainer);
+
+			@SuppressWarnings("resource")
+			AFF4ZipContainer con = (AFF4ZipContainer) container;
+
+			// Test the contents of the map stream via a sha1 hash.
+			testStreamContents(con.getSegment("information.turtle"), "1e69f88af3547bb339b8d2f4538cdfbb9627f2da");
 		}
 	}
 

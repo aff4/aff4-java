@@ -22,34 +22,49 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.zip.Deflater;
 
 import org.junit.Test;
 
 import com.evimetry.aff4.AFF4Lexicon;
 
 /**
- * Test the NoCompression Codec.
+ * Test the Deflate Codec.
  */
-public class TestNoCompression {
+public class TestZlibCompression {
 
 	private final String srcText = "alksjdfwienflkdfasdfasfasdfasdfasdfadfasdflka jflaskjadflk;jas ;lkdfjlaskdfjlaskdjflkalksjdfwienflkdfasdfasfasdfasdfasdalksjdfwi";
 	private final int blockLength = srcText.length();
 
 	@Test
-	public void testNoCompression() throws IOException {
+	public void testDeflate() throws IOException {
+
 		ByteBuffer source = ByteBuffer.allocateDirect(blockLength).order(ByteOrder.LITTLE_ENDIAN);
 		source.put(srcText.getBytes());
 		source.position(0);
+		
+		ByteBuffer destination = ByteBuffer.allocateDirect(blockLength * 2).order(ByteOrder.LITTLE_ENDIAN);
+		
+		Deflater compressor = new Deflater(Deflater.BEST_COMPRESSION, false);
+		compressor.setInput(srcText.getBytes());
+		compressor.finish();
+		
+		byte[] d = new byte[blockLength * 2];
+		int res = compressor.deflate(d);
+		compressor.end();
+		destination.put(d);
+		destination.position(0);
+		destination.limit(res);
 
 		// Test our decompression.
-		CompressionCodec c = CompressionCodec.getCodec(AFF4Lexicon.NoCompression, blockLength);
-		ByteBuffer dec = c.decompress(source);
+		CompressionCodec c = CompressionCodec.getCodec(AFF4Lexicon.ZlibCompression, blockLength);
+		ByteBuffer dec = c.decompress(destination);
 		
 		// Ensure our source buffers position is unchanged.
-		assertEquals(0, source.position());
-		
+		assertEquals(0, destination.position());
 		assertEquals(0, dec.position());
 		assertEquals(128, dec.remaining());
 		assertTrue(dec.compareTo(source) == 0);
 	}
+	
 }

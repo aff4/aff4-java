@@ -1,16 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.evimetry</groupId>
 	<artifactId>com.evimetry.aff4</artifactId>
 	<version>1.0.1</version>
 	<name>AFF4 Java</name>
-	<url>https://github.com/aff4/aff4-java</url>
+	<url>https://github.com/aff4/aff4-java/</url>
 	<organization>
-		<name>Schatz Forensic | Evimetry</name>
-		<url>https://evimetry.com</url>
+		<name>Schatz Forensic</name>
+		<url>http://www.schatzforensic.com.au</url>
 	</organization>
-	<description>AFF4 Application Library for Java</description>
+	<description>AFF4 Reader Library for Java</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,7 +22,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.3</version>
+				<version>3.8.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -30,26 +31,56 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.19</version>
+				<version>3.0.0-M3</version>
 			</plugin>
 			<plugin>
 				<!-- Build an JAR WITHOUT the maven manifest -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.6</version>
+				<version>3.1.1</version>
 				<configuration>
 					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>false</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
+						</manifest>
 						<addMavenDescriptor>false</addMavenDescriptor>
 						<compress>true</compress>
+						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<additionalparam>-quiet -Xdoclint:none</additionalparam>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<useDefaultManifestFile>true</useDefaultManifestFile>
+					<defaultManifestFile>META-INF/MANIFEST.MF</defaultManifestFile>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -59,7 +90,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.19</version>
+				<version>3.0.0-M3</version>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -67,33 +98,34 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.25</version>
+			<version>1.7.26</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.25</version>
+			<version>1.7.26</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.xerial.snappy</groupId>
 			<artifactId>snappy-java</artifactId>
-			<version>1.1.4</version>
+			<version>1.1.7.3</version>
 		</dependency>
 		<dependency>
-			<groupId>net.jpountz.lz4</groupId>
-			<artifactId>lz4</artifactId>
-			<version>1.3.0</version>
+			<groupId>org.lz4</groupId>
+			<artifactId>lz4-java</artifactId>
+			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>apache-jena-libs</artifactId>
-			<version>3.3.0</version>
+			<version>3.11.0</version>
 			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
-			<version>2.5.2</version>
+			<version>2.7.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

@@ -3,19 +3,45 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.evimetry.aff4</groupId>
-	<artifactId>reader-lite</artifactId>
+	<artifactId>aff4-reader-lite</artifactId>
 	<version>1.0.1</version>
-	<name>AFF4 Java</name>
+	<name>AFF4 Java Reader-lite</name>
 	<url>https://github.com/aff4/aff4-java/</url>
 	<organization>
 		<name>Schatz Forensic</name>
 		<url>http://www.schatzforensic.com.au</url>
 	</organization>
-	<description>AFF4 Reader Library for Java</description>
+	<description>A lightweight reader library for AFF4 Standard v1.0 Forensic Images</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<licenses>
+	  <license>
+	    <name>The Apache License, Version 2.0</name>
+	    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+	  </license>
+	  <license>
+	    <name>GNU Lesser General Public License (LGPL) v3</name>
+	    <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+	  </license>
+	</licenses>
+	
+	 <developers>
+	    <developer>
+	      <name>Bradley Schatz</name>
+	      <email>bradley@schatzforensic.com</email>
+	      <organization>Schatz Forensic</organization>
+	      <organizationUrl>https://schatzforensic.com/</organizationUrl>
+	    </developer>
+	  </developers>
+
+	<scm>
+	  <connection>scm:git:https://github.com/aff4/aff4-java.git</connection>
+	  <developerConnection>scm:git:https://github.com/aff4/aff4-java.git</developerConnection>
+	  <url>https://github.com/aff4/aff4-java/</url>
+	</scm>
 
 	<build>
 		<plugins>

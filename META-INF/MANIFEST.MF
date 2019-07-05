@@ -3,7 +3,7 @@ Automatic-Module-Name: com.evimetry.aff4
 Bundle-ManifestVersion: 2
 Bundle-Name: AFF4 Java
 Bundle-SymbolicName: com.evimetry.aff4;singleton:=true
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.3
 Bundle-Vendor: Schatz Forensic
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Classpath: .

@@ -138,6 +138,12 @@ public class ZipSegmentImageStream extends AFF4Resource implements IAFF4ImageStr
 
 	@Override
 	public synchronized SeekableByteChannel position(long newPosition) throws IOException {
+		if (closed.get()) {
+			throw new ClosedChannelException();
+		}
+		if (newPosition < 0) {
+			throw new IllegalArgumentException();
+		}
 		if (newPosition >= size) {
 			newPosition = size - 1;
 		}

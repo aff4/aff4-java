@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
@@ -229,8 +230,13 @@ public class AFF4MapMaterialiser {
 			buffer.flip();
 			int sz = MapEntryPoint.getSize();
 			long offset = 0;
+			// Add all map entries to a sorted list.
+			PriorityQueue<MapEntryPoint> points = new PriorityQueue<>((buffer.capacity() / sz) + 1);
 			while (buffer.remaining() >= sz) {
-				MapEntryPoint mapPoint = MapEntryPoint.create(buffer);
+				points.add(MapEntryPoint.create(buffer));
+			}
+			while(!points.isEmpty()) {
+				MapEntryPoint mapPoint = points.poll();
 				if (offset != mapPoint.getOffset()) {
 					if (!isSparse) {
 						logger.warn(String.format("Map %s expected offset 0x%08x, found offset 0x%08x.", resource,

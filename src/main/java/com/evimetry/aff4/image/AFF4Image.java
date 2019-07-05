@@ -103,6 +103,12 @@ public class AFF4Image extends AFF4Resource implements IAFF4Image {
 			addStringProperty(model, caseResource.get(), AFF4Lexicon.caseDescription);
 			addStringProperty(model, caseResource.get(), AFF4Lexicon.examiner);
 		}
+		/* Black Bag Technologies Custom Properties */
+		if (properties.get(AFF4Lexicon.RDFType).contains(AFF4Lexicon.APFSContainerImage)) {
+			addResourceProperty(model, getResourceID(), AFF4Lexicon.APFSContainerType);
+			addBooleanProperty(model, getResourceID(), AFF4Lexicon.ContainsUnallocated);
+			addBooleanProperty(model, getResourceID(), AFF4Lexicon.ContainsExtents);
+		}
 	}
 
 	@Override

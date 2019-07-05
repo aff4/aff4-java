@@ -162,9 +162,25 @@ public abstract class AFF4Resource implements IAFF4Resource {
 			properties.put(property, Collections.singletonList(value.get()));
 		}
 	}
+	
+	/**
+	 * Add the given boolean property to this objects property list if present.
+	 * 
+	 * @param model The RDF model to use.
+	 * @param resource The resource to enquire
+	 * @param property The property to add.
+	 */
+	protected void addBooleanProperty(Model model, String resource, AFF4Lexicon property) {
+		Optional<Boolean> value = RDFUtil.readBooleanProperty(model, resource, property);
+		if (value.isPresent()) {
+			properties.put(property, Collections.singletonList(value.get()));
+		}
+	}
 
 	/**
 	 * Add the given resource property to this objects property list if present.
+	 * <p>
+	 * Note: The resources may either be stored as a String or AFF4Lexicon.
 	 * 
 	 * @param model The RDF model to use.
 	 * @param resource The resource to enquire
@@ -178,7 +194,9 @@ public abstract class AFF4Resource implements IAFF4Resource {
 			StmtIterator stmIter = r.listProperties(p);
 			while (stmIter.hasNext()) {
 				Statement stm = stmIter.next();
-				resources.add(stm.getResource().getURI());
+				String res = stm.getResource().getURI();
+				AFF4Lexicon element = AFF4Lexicon.forValue(res);
+				resources.add(element == AFF4Lexicon.UNKNOWN ? res : element);
 			}
 		}
 		if (!resources.isEmpty()) {
@@ -188,6 +206,9 @@ public abstract class AFF4Resource implements IAFF4Resource {
 
 	/**
 	 * Add the given resource property to this objects property list if present.
+	 * <p>
+	 * Note: The Types will be stored as AFF4Lexicon, and unknown types will be ignored/not added to the list of
+	 * elements for the given property.
 	 * 
 	 * @param model The RDF model to use.
 	 * @param resource The resource to enquire

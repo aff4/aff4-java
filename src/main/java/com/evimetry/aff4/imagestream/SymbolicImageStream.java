@@ -151,6 +151,9 @@ public class SymbolicImageStream extends AFF4Resource implements IAFF4ImageStrea
 
 	@Override
 	public synchronized SeekableByteChannel position(long newPosition) throws IOException {
+		if (newPosition < 0) {
+			throw new IllegalArgumentException();
+		}
 		this.position = newPosition;
 		return this;
 	}

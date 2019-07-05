@@ -207,7 +207,7 @@ public class AFF4Map extends AFF4Resource implements IAFF4Map, SeekableByteChann
 		if (dst == null || !dst.hasRemaining()) {
 			return 0;
 		}
-		if (position + 1 >= size) {
+		if (position + 1 >= size || position == Long.MAX_VALUE) {
 			return -1;
 		}
 		if (dst.remaining() > size - position) {
@@ -294,6 +294,12 @@ public class AFF4Map extends AFF4Resource implements IAFF4Map, SeekableByteChann
 
 	@Override
 	public synchronized SeekableByteChannel position(long newPosition) throws IOException {
+		if (closed.get()) {
+			throw new ClosedChannelException();
+		}
+		if (newPosition < 0) {
+			throw new IllegalArgumentException();
+		}
 		if (newPosition >= size) {
 			newPosition = size - 1;
 		}

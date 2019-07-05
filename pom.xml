@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.evimetry.aff4</groupId>
 	<artifactId>aff4-reader-lite</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.3</version>
 	<name>AFF4 Java Reader-lite</name>
 	<url>https://github.com/aff4/aff4-java/</url>
 	<organization>

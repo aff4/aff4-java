@@ -1,0 +1,12 @@
+[1.0.3] 5-Jul-2019
+ - Support MQ custom lexicon items
+ 
+[1.0.2] 
+ - Support for C-AFF4/MQ out of order maps (spec compliant/ambiguous)
+ 
+[1.0.1] 
+ - Fix Evimetry blake2b lexicon item (spec incompliant)
+ - Tolerate C-AFF4/MQ subsized chunks (spec incompliant)
+ - Support C-AFF4/MQ ZLib compression 
+ - Tolerate Java ZIP implementation bug
+ 

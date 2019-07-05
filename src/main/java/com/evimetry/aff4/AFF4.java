@@ -36,6 +36,11 @@ public class AFF4 {
 	public final static String AFF4_RDF_PREFIX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
 	/**
+	 * Black Bag Technologies base URI for custom properties
+	 */
+	public final static String BBT_BASE_URI = "https://blackbagtech.com/aff4/Schema#";
+	
+	/**
 	 * The default chunk size
 	 */
 	public final static int DEFAULT_CHUNK_SIZE = 32 * 1024;

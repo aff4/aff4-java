@@ -202,7 +202,11 @@ public enum AFF4Lexicon {
 	/**
 	 * The Blake2B data type.
 	 */
-	Blake2b(AFF4.AFF4_BASE_URI + "Blake2b"),
+	Blake2b(AFF4.AFF4_BASE_URI + "blake2b"),
+	/**
+	 * The Blake2B data type. (evimetry legacy).
+	 */
+	Blake2bEv(AFF4.AFF4_BASE_URI + "Blake2b"),
 
 	/**
 	 * Hash of index segment
@@ -293,7 +297,38 @@ public enum AFF4Lexicon {
 	/**
 	 * Optional RDF type to define case examiner who performed the acquisition.
 	 */
-	examiner(AFF4.AFF4_BASE_URI + "examiner");
+	examiner(AFF4.AFF4_BASE_URI + "examiner"),
+	
+	
+	/* Black Bag Technologies Custom Properties */
+	/**
+	 * APFS Container type
+	 */
+	APFSContainerImage(AFF4.BBT_BASE_URI + "APFSContainerImage"),
+	/**
+	 * APFS Container type
+	 */
+	APFSContainerType(AFF4.BBT_BASE_URI + "APFSContainerType"),
+	/**
+	 * APFS Container type (T2)
+	 */
+	APFST2ContainerType(AFF4.BBT_BASE_URI + "APFST2ContainerType"),
+	/**
+	 * APFS Container type (Fusion)
+	 */
+	APFSFusionContainerType(AFF4.BBT_BASE_URI + "APFSFusionContainerType"),
+	/**
+	 * APFS Container type (Standard disk)
+	 */
+	APFSStandardContainerType(AFF4.BBT_BASE_URI + "APFSStandardContainerType"),
+	/**
+	 * Volume/Disk contains extents.
+	 */
+	ContainsExtents(AFF4.BBT_BASE_URI + "ContainsExtents"),
+	/**
+	 * Volume/Disk contains unallocated regions (sparse).
+	 */
+	ContainsUnallocated(AFF4.BBT_BASE_URI + "ContainsUnallocated");
 
 	/**
 	 * Map of all values to activities.
@@ -329,6 +364,11 @@ public enum AFF4Lexicon {
 	 * @return The value of the enumeration.
 	 */
 	public String getValue() {
+		return value;
+	}
+	
+	@Override
+	public String toString() {
 		return value;
 	}
 

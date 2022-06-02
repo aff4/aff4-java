@@ -63,7 +63,7 @@ public class TestImageMaterialisation {
 	private final static String linearSHA1 = "7d3d27f667f95f7ec5b9d32121622c0f4b60b48d";
 	private final static String allocatedSHA1 = "e8650e89b262cf0b4b73c025312488d5a6317a26";
 	private final static String readErrorSHA1 = "67e245a640e2784ead30c1ff1a3f8d237b58310f";
-	private final static String blankSHA1 = "e68329455580cb50fb1debc88cecf2e9aaf3f7fe";
+	private final static String blankSHA1 = "5e3ba42e404c04f85ac8f0d09b85635fb5e88243";
 	/**
 	 * The size of the read to perform.
 	 */
@@ -212,7 +212,7 @@ public class TestImageMaterialisation {
 			IAFF4Map map = image.getMap();
 			assertEquals("aff4://223fb1d7-7826-4631-a35b-df14ad7bf75e", map.getResourceID());
 			try (SeekableByteChannel channel = map.getChannel()) {
-				assertEquals(99983360, channel.size());
+				assertEquals(268435456, channel.size());
 				assertEquals(blankSHA1, getDigest(channel, readSize));
 			}
 		}
@@ -232,7 +232,7 @@ public class TestImageMaterialisation {
 			IAFF4Map map = image.getMap();
 			assertEquals("aff4://6e3c59b5-e660-4adf-8eb6-472cef961c2d", map.getResourceID());
 			try (SeekableByteChannel channel = map.getChannel()) {
-				assertEquals(99983360, channel.size());
+				assertEquals(268435456, channel.size());
 				assertEquals(blankSHA1, getDigest(channel, readSize));
 			}
 		}

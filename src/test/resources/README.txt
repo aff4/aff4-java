@@ -13,3 +13,7 @@ These images are produced using the Evimetry 2.2 AFF4 implementation.
 The following Images were produced via unit tests for emulation of Physical Memory acquisition:
 	Micro7.001.aff4
 	Micro9.001.aff4
+
+Additional Images used for unit testing purposes:
+    blank.aff4
+    blank5.aff4

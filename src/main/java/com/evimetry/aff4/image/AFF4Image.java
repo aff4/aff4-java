@@ -129,7 +129,7 @@ public class AFF4Image extends AFF4Resource implements IAFF4Image {
 			// we are also a aff4:Map
 			return new AFF4Map(getResourceID(), getResourceID(), parent, model);
 		}
-		logger.warn("No Map aff4:dataStream defined for Image " + getResourceID());
+
 		return null;
 	}
 

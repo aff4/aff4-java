@@ -86,6 +86,11 @@ public class Information {
 							}
 						}
 					}
+				} else if (image.getProperty(AFF4Lexicon.RDFType).contains(AFF4Lexicon.ImageStream)) {
+					IAFF4Resource resource = container.open(image.getResourceID());
+					if (resource != null) {
+						exportProperties("\nStream: ", resource.getResourceID(), resource.getProperties());
+					}
 				}
 			}
 		} catch (Throwable e) {

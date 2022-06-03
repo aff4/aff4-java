@@ -151,15 +151,7 @@ public class Containers {
 			logger.error(e.getMessage(), e);
 		}
 
-		if (resourceID != null) {
-			resourceID = resourceID.trim();
-
-			if (resourceID.endsWith("/")) {
-				resourceID = resourceID.substring(0, resourceID.length() - 1);
-			}
-		}
-
-		return resourceID;
+		return (resourceID == null) ? null : resourceID.trim();
 	}
 
 	/**

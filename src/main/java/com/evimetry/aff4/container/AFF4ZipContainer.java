@@ -223,7 +223,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		try {
 			long maj = Long.parseLong(major.iterator().next().toString());
 			long min = Long.parseLong(minor.iterator().next().toString());
-			return (maj == 1 && min == 0);
+			return maj == 1 && (min == 0 || min == 1);
 		} catch (NumberFormatException e) {
 			// Ignore.
 			logger.warn(e.getMessage(), e);

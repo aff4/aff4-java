@@ -5,7 +5,7 @@ Bundle-Name: AFF4 Java
 Bundle-SymbolicName: com.evimetry.aff4;singleton:=true
 Bundle-Version: 1.0.3
 Bundle-Vendor: Schatz Forensic
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-Classpath: .
 Export-Package: com.evimetry.aff4,
  com.evimetry.aff4.codec,
@@ -19,16 +19,16 @@ Export-Package: com.evimetry.aff4,
  com.evimetry.aff4.resolver,
  com.evimetry.aff4.resource,
  com.evimetry.aff4.struct
-Import-Package: com.github.benmanes.caffeine.cache;version="2.7.0",
+Import-Package: com.github.benmanes.caffeine.cache;version="3.1.1",
  net.jpountz.lz4,
- org.apache.commons.compress.archivers.zip;version="1.18.0",
- org.apache.commons.io;version="2.6.0",
- org.apache.jena;version="3.10.0",
- org.apache.jena.datatypes.xsd;version="3.10.0",
- org.apache.jena.rdf.model;version="3.10.0",
- org.apache.jena.util;version="3.10.0",
- org.apache.jena.vocabulary;version="3.10.0",
- org.slf4j;version="1.7.2",
- org.xerial.snappy;version="1.1.7"
+ org.apache.commons.compress.archivers.zip;version="1.21",
+ org.apache.commons.io;version="2.11.0",
+ org.apache.jena;version="4.5.0",
+ org.apache.jena.datatypes.xsd;version="4.5.0",
+ org.apache.jena.rdf.model;version="4.5.0",
+ org.apache.jena.util;version="4.5.0",
+ org.apache.jena.vocabulary;version="4.5.0",
+ org.slf4j;version="1.7.36",
+ org.xerial.snappy;version="1.1.8.4"
 
 

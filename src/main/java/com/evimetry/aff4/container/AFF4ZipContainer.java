@@ -143,9 +143,9 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 			try (InputStream stream = zip.getInputStream(entry)) {
 				Properties prop = new Properties();
 				prop.load(stream);
-				setPropety(prop, "tool", AFF4Lexicon.Tool);
-				setPropety(prop, "major", AFF4Lexicon.majorVersion);
-				setPropety(prop, "minor", AFF4Lexicon.minorVersion);
+				setProperty(prop, "tool", AFF4Lexicon.Tool);
+				setProperty(prop, "major", AFF4Lexicon.majorVersion);
+				setProperty(prop, "minor", AFF4Lexicon.minorVersion);
 				if(!checkSupportedVersion()) {
 					try {
 						close();
@@ -172,7 +172,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 	 * @param property The property to enquire
 	 * @param key The key to use to insert into the main properties.
 	 */
-	private void setPropety(Properties input, String property, AFF4Lexicon key) {
+	private void setProperty(Properties input, String property, AFF4Lexicon key) {
 		String v = input.getProperty(property);
 		if (v != null) {
 			this.properties.put(key, Collections.singletonList(v));

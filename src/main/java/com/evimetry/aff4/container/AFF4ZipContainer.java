@@ -365,7 +365,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 	 */
 	public IAFF4ImageStream getSegment(String resource) throws IOException {
 		// Strip any leading URI for this container.
-		String res = sanitizeResource(resource);
+		String res = NameCodec.SanitizeResource(resource, getResourceID());
 		ZipArchiveEntry entry = zip.getEntry(res);
 		if (entry != null) {
 			if (entry.getMethod() != ZipMethod.STORED.getCode()) {
@@ -421,7 +421,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 				}
 			} else {
 				// Check for index file.
-				String res = sanitizeResource(resource + "/00000000.index");
+				String res = NameCodec.SanitizeResource(resource + "/00000000.index", getResourceID());
 				ZipArchiveEntry entry = zip.getEntry(res);
 				if (entry != null) {
 					// This is us!
@@ -468,29 +468,6 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 			return new AFF4Image(resource, this, model);
 		}
 		return null;
-	}
-
-	/**
-	 * Attempt to sanitise the given resource string
-	 * 
-	 * @param res The resource string to sanitise
-	 * @return The sanitised resource string.
-	 */
-	private String sanitizeResource(String res) {
-		// strip any leading "/"
-		while (res.startsWith("/")) {
-			res = res.substring(1);
-		}
-		if (res.startsWith(getResourceID())) {
-			res = res.substring(getResourceID().length());
-		}
-		// Convert any "aff4://" characters to "aff4%3A%2F%2F"
-		res = NameCodec.encode(res);
-		// strip any leading "/"
-		while (res.startsWith("/")) {
-			res = res.substring(1);
-		}
-		return res;
 	}
 
 	/**

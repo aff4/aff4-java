@@ -44,4 +44,28 @@ public class NameCodec {
 			return path;
 		}
 	}
+
+	/**
+	 * Attempt to sanitise the given resource string
+	 *
+	 * @param res The resource string to sanitise
+	 * @param resourceID The resource ID.
+	 * @return The sanitised resource string.
+	 */
+	public static final String SanitizeResource(String res, String resourceID) {
+		// strip any leading "/"
+		while (res.startsWith("/")) {
+			res = res.substring(1);
+		}
+		if (res.startsWith(resourceID)) {
+			res = res.substring(resourceID.length());
+		}
+		// Convert any "aff4://" characters to "aff4%3A%2F%2F"
+		res = NameCodec.encode(res);
+		// strip any leading "/"
+		while (res.startsWith("/")) {
+			res = res.substring(1);
+		}
+		return res;
+	}
 }

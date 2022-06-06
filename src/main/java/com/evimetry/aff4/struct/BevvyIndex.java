@@ -62,15 +62,24 @@ public class BevvyIndex {
 		this.bevvyID = bevvyID;
 
 		// Get the offset of the bevvy segment into the primary channel.
-		String bevvyChunkName = NameCodec.encode(String.format("%s/%08d", resource, bevvyID));
+		String resourceID = String.format("%s/%08d", resource, bevvyID);
+		String bevvyChunkName = NameCodec.encode(resourceID);
 		ZipArchiveEntry entry = zipContainer.getEntry(bevvyChunkName);
+		if (entry == null) {
+			bevvyChunkName = NameCodec.SanitizeResource(resourceID, parent.getResourceID());
+			entry = zipContainer.getEntry(bevvyChunkName);
+		}
 		if (entry == null)
 			throw new IOException("Missing bevvy segment");
 		this.offset = entry.getDataOffset();
 
 		// Load the indices
-		String bevvyIndexName = NameCodec.encode(String.format("%s/%08d.index", resource, bevvyID));
+		String bevvyIndexID = String.format("%s/%08d.index", resource, bevvyID);
+		String bevvyIndexName = NameCodec.encode(bevvyIndexID);
 		IAFF4ImageStream stream = parent.getSegment(bevvyIndexName);
+		if (stream == null) {
+			stream = parent.getSegment(bevvyIndexID);
+		}
 		try (SeekableByteChannel channel = stream.getChannel()) {
 			ByteBuffer buffer = ByteBuffer.allocateDirect((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
 			Streams.readFull(channel, 0, buffer);

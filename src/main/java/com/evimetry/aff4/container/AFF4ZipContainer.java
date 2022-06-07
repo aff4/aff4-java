@@ -367,6 +367,14 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		// Strip any leading URI for this container.
 		String res = NameCodec.SanitizeResource(resource, getResourceID());
 		ZipArchiveEntry entry = zip.getEntry(res);
+		// Some AFF4 tools strip leading '/' characters from the
+		// entity name, others leave it in.  Same goes for trailing
+		// '/' characters on ARNs.
+		if (entry == null) {
+			res = "/" + res;
+			entry = zip.getEntry(res);
+		}
+
 		if (entry != null) {
 			if (entry.getMethod() != ZipMethod.STORED.getCode()) {
 				if (entry.getSize() < ZipSegmentImageCompressedStream.MAX_BUFFER_SIZE) {

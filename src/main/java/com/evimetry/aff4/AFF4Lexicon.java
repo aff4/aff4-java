@@ -38,6 +38,11 @@ public enum AFF4Lexicon {
 	 * Base type for AFF4 Zip64-based containers.
 	 */
 	ZipVolume(AFF4.AFF4_BASE_URI + "ZipVolume"),
+
+	/**
+	 * ZipFileSegment is an AFF4 object representing a single member of the zip file.
+	 */
+	ZipFileSegment(AFF4.AFF4_BASE_URI + "zip_segment"),
 	
 	/**
 	 * The creation time of the volume.

@@ -57,8 +57,11 @@ public class NameCodec {
 		while (res.startsWith("/")) {
 			res = res.substring(1);
 		}
+		var encodedResourceID = NameCodec.encode(resourceID);
 		if (res.startsWith(resourceID)) {
 			res = res.substring(resourceID.length());
+		} else if (res.startsWith(encodedResourceID)) {
+			res = res.substring(encodedResourceID.length());
 		}
 		// Convert any "aff4://" characters to "aff4%3A%2F%2F"
 		res = NameCodec.encode(res);

@@ -371,8 +371,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		// entity name, others leave it in.  Same goes for trailing
 		// '/' characters on ARNs.
 		if (entry == null) {
-			res = "/" + res;
-			entry = zip.getEntry(res);
+			entry = zip.getEntry("/" + res);
 		}
 
 		if (entry != null) {
@@ -431,6 +430,13 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 				// Check for index file.
 				String res = NameCodec.SanitizeResource(resource + "/00000000.index", getResourceID());
 				ZipArchiveEntry entry = zip.getEntry(res);
+				// Some AFF4 tools strip leading '/' characters from the
+				// entity name, others leave it in.  Same goes for trailing
+				// '/' characters on ARNs.
+				if (entry == null) {
+					entry = zip.getEntry("/" + res);
+				}
+
 				if (entry != null) {
 					// This is us!
 					IAFF4ImageStream stream = new AFF4ImageStream(resource, this, zip, channel, model);

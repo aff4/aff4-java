@@ -68,6 +68,12 @@ public class BevvyIndex {
 		if (entry == null) {
 			bevvyChunkName = NameCodec.SanitizeResource(resourceID, parent.getResourceID());
 			entry = zipContainer.getEntry(bevvyChunkName);
+			// Some AFF4 tools strip leading '/' characters from the
+			// entity name, others leave it in.  Same goes for trailing
+			// '/' characters on ARNs.
+			if (entry == null) {
+				entry = zipContainer.getEntry("/" + bevvyChunkName);
+			}
 		}
 		if (entry == null)
 			throw new IOException("Missing bevvy segment");

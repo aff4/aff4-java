@@ -17,8 +17,12 @@
 package com.evimetry.aff4.rdf;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
+import org.apache.jena.datatypes.BaseDatatype;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
@@ -182,6 +186,13 @@ public class RDFUtil {
 				if (literalValue instanceof XSDDateTime) {
 					XSDDateTime datetime = (XSDDateTime) literalValue;
 					return Optional.of(datetime.asCalendar().toInstant());
+				} else if (literalValue instanceof BaseDatatype.TypedValue) {
+					BaseDatatype.TypedValue type = (BaseDatatype.TypedValue) literalValue;
+					if (type.datatypeURI.toLowerCase().contains("datetime")) {
+						Calendar datetime = Calendar.getInstance();
+						datetime.setTime(Date.from(ZonedDateTime.parse(type.lexicalValue).toInstant()));
+						return Optional.of(datetime.toInstant());
+					}
 				}
 			}
 		}

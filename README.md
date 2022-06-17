@@ -1,6 +1,6 @@
-AFF4 Java v1.0.3
+AFF4 Java v1.0.4
 -----
-An AFF4 Standard v1.0 compliant reader library.
+An AFF4 Standard v1.1 compliant reader library.
 
 Copyright (c) Schatz Forensic Pty Ltd, 2017-2019
 

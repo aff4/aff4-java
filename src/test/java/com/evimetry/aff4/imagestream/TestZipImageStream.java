@@ -180,7 +180,7 @@ public class TestZipImageStream {
 			AFF4ZipContainer con = (AFF4ZipContainer) container;
 
 			// Test the contents of the map stream via a sha1 hash.
-			testStreamContents(con.getSegment("information.turtle"), "1e69f88af3547bb339b8d2f4538cdfbb9627f2da");
+			testStreamContents(con.getSegment("information.turtle"), "046c1bb8d55eab3550a4649e080a8f8bf8242884");
 		}
 	}
 

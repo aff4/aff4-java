@@ -78,6 +78,14 @@ public class AFF4Image extends AFF4Resource implements IAFF4Image {
 		addStringProperty(model, getResourceID(), AFF4Lexicon.acquisitionType);
 		addResourceProperty(model, getResourceID(), AFF4Lexicon.dataStream);
 		addResourceProperty(model, getResourceID(), AFF4Lexicon.dependentStream);
+
+		// Logical image details
+		addDateTimeProperty(model, getResourceID(), AFF4Lexicon.birthTime);
+		addDateTimeProperty(model, getResourceID(), AFF4Lexicon.lastAccessed);
+		addDateTimeProperty(model, getResourceID(), AFF4Lexicon.lastWritten);
+		addDateTimeProperty(model, getResourceID(), AFF4Lexicon.recordChanged);
+		addStringProperty(model, getResourceID(), AFF4Lexicon.originalFileName);
+
 		// Is disk or memory image?
 		if (properties.get(AFF4Lexicon.RDFType).contains(AFF4Lexicon.MemoryImage)) {
 			// Memory
@@ -121,7 +129,7 @@ public class AFF4Image extends AFF4Resource implements IAFF4Image {
 			// we are also a aff4:Map
 			return new AFF4Map(getResourceID(), getResourceID(), parent, model);
 		}
-		logger.warn("No Map aff4:dataStream defined for Image " + getResourceID());
+
 		return null;
 	}
 

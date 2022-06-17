@@ -51,45 +51,47 @@ public class Information {
 			return;
 		}
 		String filename = args[0];
-		File file = new File(filename);
+
 		/*
 		 * Open the container.
 		 */
-		try (IAFF4Container container = Containers.open(file)) {
-
+		try (IAFF4Container container = Containers.open(new File(filename))) {
 			exportProperties("Container: ", container.getResourceID(), container.getProperties());
+
 			/*
-			 * Get an iterator to all images available in this container.
+			 * Iterate over the available images in the container.
 			 */
 			Iterator<IAFF4Image> images = container.getImages();
-			/*
-			 * Get the first image in the container, and print some details of the image.
-			 */
 			while (images.hasNext()) {
 				IAFF4Image image = images.next();
 				exportProperties("\nImage: ", image.getResourceID(), image.getProperties());
 
 				/*
-				 * Get the map object of the image, and print come details of the map.
+				 * Get the map object of the image, print some map details.
 				 */
 				IAFF4Map map = image.getMap();
-				exportProperties("\nMap: ", map.getResourceID(), map.getProperties());
+				if (map != null) {
+					exportProperties("\nMap: ", map.getResourceID(), map.getProperties());
 
-				/*
-				 * Add look for dependent streams on the map.
-				 */
-				Collection<Object> streams = map.getProperty(AFF4Lexicon.dependentStream);
-				if (streams != null) {
-					Iterator<Object> elements = streams.iterator();
-					while (elements.hasNext()) {
-						String element = elements.next().toString();
-						IAFF4Resource resource = container.open(element);
-						if (resource != null) {
-							exportProperties("\nStream: ", resource.getResourceID(), resource.getProperties());
+					/*
+					 * Look for dependent streams on the map.
+					 */
+					Collection<Object> streams = map.getProperty(AFF4Lexicon.dependentStream);
+					if (streams != null) {
+						for (Object stream : streams) {
+							String element = stream.toString();
+							IAFF4Resource resource = container.open(element);
+							if (resource != null) {
+								exportProperties("\nStream: ", resource.getResourceID(), resource.getProperties());
+							}
 						}
 					}
+				} else if (image.getProperty(AFF4Lexicon.RDFType).contains(AFF4Lexicon.ImageStream)) {
+					IAFF4Resource resource = container.open(image.getResourceID());
+					if (resource != null) {
+						exportProperties("\nStream: ", resource.getResourceID(), resource.getProperties());
+					}
 				}
-
 			}
 		} catch (Throwable e) {
 			logger.error(e.getMessage());
@@ -110,7 +112,6 @@ public class Information {
 		if (types != null) {
 			System.out.print(" AFF4 Types: ");
 			print(types);
-
 		}
 		for (Entry<AFF4Lexicon, Collection<Object>> entry : properties.entrySet()) {
 			if (entry.getKey() != AFF4Lexicon.RDFType) {

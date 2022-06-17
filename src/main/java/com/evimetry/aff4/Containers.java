@@ -89,7 +89,7 @@ public class Containers {
 		}
 
 		String resourceID = getResourceID(file);
-		if (resourceID == null || resourceID.trim().isEmpty()) {
+		if (resourceID == null || resourceID.isEmpty()) {
 			throw new IOException("File does not appear to be an AFF4 File.");
 		}
 		try {
@@ -151,7 +151,7 @@ public class Containers {
 			logger.error(e.getMessage(), e);
 		}
 
-		return resourceID;
+		return (resourceID == null) ? null : resourceID.trim();
 	}
 
 	/**

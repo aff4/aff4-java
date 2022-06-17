@@ -16,6 +16,7 @@
  */
 package com.evimetry.aff4.resource;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -172,6 +173,20 @@ public abstract class AFF4Resource implements IAFF4Resource {
 	 */
 	protected void addBooleanProperty(Model model, String resource, AFF4Lexicon property) {
 		Optional<Boolean> value = RDFUtil.readBooleanProperty(model, resource, property);
+		if (value.isPresent()) {
+			properties.put(property, Collections.singletonList(value.get()));
+		}
+	}
+
+	/**
+	 * Add the given date property to this objects property list if present.
+	 *
+	 * @param model The RDF model to use.
+	 * @param resource The resource to enquire
+	 * @param property The property to add.
+	 */
+	public void addDateTimeProperty(Model model, String resource, AFF4Lexicon property) {
+		Optional<Instant> value = RDFUtil.readDateTimeProperty(model, resource, property);
 		if (value.isPresent()) {
 			properties.put(property, Collections.singletonList(value.get()));
 		}

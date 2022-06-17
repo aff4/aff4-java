@@ -38,6 +38,11 @@ public enum AFF4Lexicon {
 	 * Base type for AFF4 Zip64-based containers.
 	 */
 	ZipVolume(AFF4.AFF4_BASE_URI + "ZipVolume"),
+
+	/**
+	 * ZipFileSegment is an AFF4 object representing a single member of the zip file.
+	 */
+	ZipFileSegment(AFF4.AFF4_BASE_URI + "zip_segment"),
 	
 	/**
 	 * The creation time of the volume.
@@ -328,7 +333,63 @@ public enum AFF4Lexicon {
 	/**
 	 * Volume/Disk contains unallocated regions (sparse).
 	 */
-	ContainsUnallocated(AFF4.BBT_BASE_URI + "ContainsUnallocated");
+	ContainsUnallocated(AFF4.BBT_BASE_URI + "ContainsUnallocated"),
+
+	/* AFF4-L Properties */
+	/**
+	 * The original unencoded file path and name of a logical evidence object.
+	 */
+	originalFileName(AFF4.AFF4_BASE_URI + "originalFileName"),
+
+	/**
+	 * The birth time of a file's content and metadata.
+ 	 */
+	birthTime(AFF4.AFF4_BASE_URI + "birthTime"),
+
+	/**
+	 * The last modified time of a file's content.
+	 */
+	lastWritten(AFF4.AFF4_BASE_URI + "lastWritten"),
+
+	/**
+	 * The last modified time of a file's filesystem metadata.
+	 */
+	recordChanged(AFF4.AFF4_BASE_URI + "recordChanged"),
+
+	/**
+	 * The last access time of a file's content.
+	 */
+	lastAccessed(AFF4.AFF4_BASE_URI + "lastAccessed"),
+
+	/**
+	 * Folder Class representing a suspect folder.
+	 */
+	Folder(AFF4.AFF4_BASE_URI + "Folder"),
+
+	/**
+	 * Folder Class representing a suspect folder.
+	 */
+	FolderImage(AFF4.AFF4_BASE_URI + "FolderImage"),
+
+	/**
+	 * FileImage Class representing a suspect file.
+	 */
+	FileImage(AFF4.AFF4_BASE_URI + "FileImage"),
+
+	/**
+	 * Property representing the FilesImages contained in a Folder.
+	 */
+	FilesImages(AFF4.AFF4_BASE_URI + "FilesImages"),
+
+	/**
+	 * Class representing a logical acquisition activity.
+	 */
+	LogicalAcquisitionTask(AFF4.AFF4_BASE_URI + "LogicalAcquisitionTask"),
+
+	/**
+	 * Property pointing to a Folder or FileImage which forms the root of an acquisition operation.
+	 */
+	FilesystemRoot(AFF4.AFF4_BASE_URI + "filesystemRoot");
 
 	/**
 	 * Map of all values to activities.

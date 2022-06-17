@@ -143,9 +143,9 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 			try (InputStream stream = zip.getInputStream(entry)) {
 				Properties prop = new Properties();
 				prop.load(stream);
-				setPropety(prop, "tool", AFF4Lexicon.Tool);
-				setPropety(prop, "major", AFF4Lexicon.majorVersion);
-				setPropety(prop, "minor", AFF4Lexicon.minorVersion);
+				setProperty(prop, "tool", AFF4Lexicon.Tool);
+				setProperty(prop, "major", AFF4Lexicon.majorVersion);
+				setProperty(prop, "minor", AFF4Lexicon.minorVersion);
 				if(!checkSupportedVersion()) {
 					try {
 						close();
@@ -172,7 +172,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 	 * @param property The property to enquire
 	 * @param key The key to use to insert into the main properties.
 	 */
-	private void setPropety(Properties input, String property, AFF4Lexicon key) {
+	private void setProperty(Properties input, String property, AFF4Lexicon key) {
 		String v = input.getProperty(property);
 		if (v != null) {
 			this.properties.put(key, Collections.singletonList(v));
@@ -223,7 +223,7 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 		try {
 			long maj = Long.parseLong(major.iterator().next().toString());
 			long min = Long.parseLong(minor.iterator().next().toString());
-			return (maj == 1 && min == 0);
+			return maj == 1 && (min == 0 || min == 1);
 		} catch (NumberFormatException e) {
 			// Ignore.
 			logger.warn(e.getMessage(), e);
@@ -365,8 +365,15 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 	 */
 	public IAFF4ImageStream getSegment(String resource) throws IOException {
 		// Strip any leading URI for this container.
-		String res = sanitizeResource(resource);
+		String res = NameCodec.SanitizeResource(resource, getResourceID());
 		ZipArchiveEntry entry = zip.getEntry(res);
+		// Some AFF4 tools strip leading '/' characters from the
+		// entity name, others leave it in.  Same goes for trailing
+		// '/' characters on ARNs.
+		if (entry == null) {
+			entry = zip.getEntry("/" + res);
+		}
+
 		if (entry != null) {
 			if (entry.getMethod() != ZipMethod.STORED.getCode()) {
 				if (entry.getSize() < ZipSegmentImageCompressedStream.MAX_BUFFER_SIZE) {
@@ -421,8 +428,15 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 				}
 			} else {
 				// Check for index file.
-				String res = sanitizeResource(resource + "/00000000.index");
+				String res = NameCodec.SanitizeResource(resource + "/00000000.index", getResourceID());
 				ZipArchiveEntry entry = zip.getEntry(res);
+				// Some AFF4 tools strip leading '/' characters from the
+				// entity name, others leave it in.  Same goes for trailing
+				// '/' characters on ARNs.
+				if (entry == null) {
+					entry = zip.getEntry("/" + res);
+				}
+
 				if (entry != null) {
 					// This is us!
 					IAFF4ImageStream stream = new AFF4ImageStream(resource, this, zip, channel, model);
@@ -468,29 +482,6 @@ public class AFF4ZipContainer extends AFF4Resource implements IAFF4Container {
 			return new AFF4Image(resource, this, model);
 		}
 		return null;
-	}
-
-	/**
-	 * Attempt to sanitise the given resource string
-	 * 
-	 * @param res The resource string to sanitise
-	 * @return The sanitised resource string.
-	 */
-	private String sanitizeResource(String res) {
-		// strip any leading "/"
-		while (res.startsWith("/")) {
-			res = res.substring(1);
-		}
-		if (res.startsWith(getResourceID())) {
-			res = res.substring(getResourceID().length());
-		}
-		// Convert any "aff4://" characters to "aff4%3A%2F%2F"
-		res = NameCodec.encode(res);
-		// strip any leading "/"
-		while (res.startsWith("/")) {
-			res = res.substring(1);
-		}
-		return res;
 	}
 
 	/**
